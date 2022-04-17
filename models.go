@@ -16,13 +16,13 @@ var (
 )
 
 type Operation struct {
-	file   *File
+	file   File
 	target string
 }
 
 func (operation Operation) preview() {
 	fmt.Printf(
-		"Original Path:\n%s\nTarget Path\n%s\n",
+		"Original Path:\n%s\nTarget Path:\n%s\n---\n",
 		operation.file.path,
 		operation.target,
 	)
@@ -86,9 +86,9 @@ func (folder *Folder) findFiles() {
 			fullPath := fmt.Sprintf("%s/%s", folder.path, info.Name())
 			filePtr.path = fullPath
 			nameInfo := strings.Split(info.Name(), ".")
-			filePtr.name = nameInfo[0]
+			filePtr.name = strings.Join(nameInfo[:len(nameInfo)-1], ".")
 			if len(nameInfo) > 1 {
-				filePtr.extension = nameInfo[1]
+				filePtr.extension = nameInfo[len(nameInfo)-1]
 			}
 			folder.addFile(*filePtr)
 		}
@@ -100,7 +100,7 @@ func (folder *Folder) findMoveOperations() (operations []Operation) {
 	ignoredFiles := []string{".DS_Store"}
 	for _, file := range folder.files {
 		if Contains(ignoredFiles, file.fullName()) {
-			break
+			continue
 		}
 		var targetPath string
 		for extensionGroup, extensionList := range folder.config {
@@ -112,11 +112,10 @@ func (folder *Folder) findMoveOperations() (operations []Operation) {
 		if targetPath == "" {
 			targetPath = filepath.Join(folder.path, "uncategorized", file.extension, file.fullName())
 		}
-
 		targetPath = file.getValidName(filepath.Dir(targetPath))
 		operations = append(
 			operations,
-			Operation{&file, targetPath},
+			Operation{file, targetPath},
 		)
 	}
 	return
@@ -125,7 +124,7 @@ func (folder *Folder) findMoveOperations() (operations []Operation) {
 func (folder Folder) organizeFiles() {
 	operations := folder.findMoveOperations()
 	for _, operation := range operations {
-		operation.preview()
+		// operation.preview()
 		operation.commit()
 	}
 }
