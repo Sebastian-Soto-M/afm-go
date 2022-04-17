@@ -41,20 +41,21 @@ func getConfig() map[string][]string {
 	return conf.config
 }
 
-func cliOptions() (folderPath string) {
+func cliOptions() (folderPath string, verbose bool) {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		panic(err)
 	}
 	flag.StringVar(&folderPath, "path", path.Join(home, "Downloads"), "Path to organize")
+	flag.BoolVar(&verbose, "verbose", false, "Display more information (origin and target paths)")
 	flag.Parse()
 	return
 }
 
 func main() {
 	config := getConfig()
-	folderPath := cliOptions()
+	folderPath, verbose := cliOptions()
 	folder := Folder{path: folderPath, files: make([]File, 0), config: config}
 	folder.findFiles()
-	folder.organizeFiles()
+	folder.organizeFiles(verbose)
 }

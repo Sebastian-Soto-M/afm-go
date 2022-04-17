@@ -121,10 +121,12 @@ func (folder *Folder) findMoveOperations() (operations []Operation) {
 	return
 }
 
-func (folder Folder) organizeFiles() {
+func (folder Folder) organizeFiles(verbose bool) {
 	operations := folder.findMoveOperations()
 	for _, operation := range operations {
-		// operation.preview()
+		if verbose {
+			operation.preview()
+		}
 		operation.commit()
 	}
 }

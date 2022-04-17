@@ -16,7 +16,6 @@ func prefixedCheck(prefix string) func(err error) (bool, error) {
 
 func Contains[T comparable](s []T, e T) bool {
 	for _, v := range s {
-		// fmt.Printf("%v == %v\n", v, e)
 		if v == e {
 			return true
 		}
