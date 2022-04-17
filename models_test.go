@@ -24,7 +24,7 @@ func TestUncategorizedFile(t *testing.T) {
 	expected, _ := filepath.Abs(filepath.Join(TEST_FOLDER, "uncategorized", "notinlist", fileName))
 
 	// Initialize folder
-	folder := Folder{path: TEST_FOLDER, config: readExtensionsConfig()}
+	folder := Folder{path: TEST_FOLDER, config: getConfig()}
 	folder.findFiles()
 
 	// Compare results
@@ -49,7 +49,7 @@ func TestFindOperationsNoDuplicates(t *testing.T) {
 	expected, _ := filepath.Abs(filepath.Join(TEST_FOLDER, "data", "json", fileName))
 
 	// Initialize folder
-	folder := Folder{path: TEST_FOLDER, config: readExtensionsConfig()}
+	folder := Folder{path: TEST_FOLDER, config: getConfig()}
 	folder.findFiles()
 
 	// Compare results
@@ -77,7 +77,7 @@ func TestFindOperationsWithDuplicates(t *testing.T) {
 	f.Close()
 
 	// Initialize folder
-	folder := Folder{path: TEST_FOLDER, config: readExtensionsConfig()}
+	folder := Folder{path: TEST_FOLDER, config: getConfig()}
 	folder.findFiles()
 	expected := filepath.Join(targetPath, "demo-1.json")
 
@@ -88,5 +88,28 @@ func TestFindOperationsWithDuplicates(t *testing.T) {
 
 	if operations[0].target != expected {
 		t.Fatalf("\nOperation target:\t%s\nExpected result:\t%s", operations[0].target, expected)
+	}
+}
+
+func TestFindOperationsWithIgnoredFile(t *testing.T) {
+	// Create temporal folder
+	os.MkdirAll(TEST_FOLDER, 0755)
+	// Create file to move
+	fileName := ".DS_Store"
+	f, err := os.Create(filepath.Join(TEST_FOLDER, fileName))
+	checkTest(err)
+	f.Close()
+
+	// Initialize folder
+	folder := Folder{path: TEST_FOLDER, config: getConfig()}
+	folder.findFiles()
+
+	// Compare results
+	operations := folder.findMoveOperations()
+
+	os.RemoveAll(folder.path)
+
+	if len(operations) > 0 {
+		t.Fatal(".DS_Store was moved")
 	}
 }

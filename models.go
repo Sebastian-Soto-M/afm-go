@@ -97,7 +97,11 @@ func (folder *Folder) findFiles() {
 }
 
 func (folder *Folder) findMoveOperations() (operations []Operation) {
+	ignoredFiles := []string{".DS_Store"}
 	for _, file := range folder.files {
+		if Contains(ignoredFiles, file.fullName()) {
+			break
+		}
 		var targetPath string
 		for extensionGroup, extensionList := range folder.config {
 			if Contains(extensionList, file.extension) {
