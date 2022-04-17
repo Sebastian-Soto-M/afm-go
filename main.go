@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -36,7 +35,7 @@ func cliOptions() (folderPath string) {
 func main() {
 	config := readExtensionsConfig()
 	folderPath := cliOptions()
-	folder := Folder{path: folderPath, files: make([]File, 0)}
+	folder := Folder{path: folderPath, files: make([]File, 0), config: config}
 	folder.findFiles()
-	fmt.Println(folder.organize(config, false))
+	folder.organizeFiles()
 }

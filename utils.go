@@ -7,7 +7,7 @@ import (
 func prefixedCheck(prefix string) func(err error) (bool, error) {
 	return func(err error) (bool, error) {
 		if err != nil {
-			log.Printf("ERROR:[%s]\t%s", prefix, err)
+			log.Fatalf("ERROR:[%s]\t%s", prefix, err)
 			return false, err
 		}
 		return true, nil
