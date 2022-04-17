@@ -9,7 +9,7 @@ import (
 )
 
 func readExtensionsConfig() (result map[string][]string) {
-	jsonFile, err := os.Open("./extension_configuration.json")
+	jsonFile, err := os.Open("extension_configuration.json")
 	check := prefixedCheck("Read Extensions")
 	res, _ := check(err)
 	if res {
